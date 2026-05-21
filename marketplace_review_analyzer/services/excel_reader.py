@@ -226,3 +226,4 @@ def _merge_partials(partials: list[dict[str, str | None]]) -> list[Product]:
             entry["ozon_url"] = item.get("url") or entry.get("ozon_url")
             entry["ozon_article"] = item.get("article") or entry.get("ozon_article")
 
+    return [Product(**v) for v in merged.values()]
