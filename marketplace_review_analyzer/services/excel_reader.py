@@ -171,3 +171,58 @@ def _infer_marketplace_from_url(url: str | None) -> str | None:
     if "ozon" in lower:
         return "Ozon"
     return None
+
+
+def _looks_like_category(value: str) -> bool:
+    normalized = _norm(value)
+    return any(token in normalized for token in ["новин", "фокус", "проблем", "категор", "без категории"])
+
+
+def _extract_variant(name: str) -> str | None:
+    text = name or ""
+    match = re.search(r"(?:\bтон\b|\bоттенок\b|\bцвет\b)\s*[:№#-]?\s*([\w\-А-Яа-яёЁ ]{1,20})", text, flags=re.I)
+    if match:
+        return match.group(0).strip()
+    # Cosmetic Excel files often encode shade as the last 2 digits: "Румяна в стике 01".
+    tail = re.search(r"(?:^|\s)(\d{1,3})$", text.strip())
+    if tail:
+        return f"Тон {tail.group(1)}"
+    return None
+
+
+def _clean_product_name(name: str) -> str:
+    name = re.sub(r"\s+", " ", name or "").strip()
+    name = re.sub(r"\s*[-–—]?\s*(\bтон\b|\bоттенок\b|\bцвет\b)\s*[:№#-]?\s*[\w\-А-Яа-яёЁ ]{1,20}$", "", name, flags=re.I).strip()
+    # Keep product names human-friendly while removing trailing shade codes.
+    name = re.sub(r"\s+\d{1,3}$", "", name).strip()
+    return name or "Без названия"
+
+
+def _merge_partials(partials: list[dict[str, str | None]]) -> list[Product]:
+    merged: dict[tuple[str, str], dict[str, str | None]] = {}
+
+    for item in partials:
+        name = item.get("name") or "Без названия"
+        variant = item.get("variant") or ""
+        key = (_norm(name), _norm(variant))
+        entry = merged.setdefault(key, {
+            "name": name,
+            "variant": item.get("variant"),
+            "category": item.get("category"),
+            "wb_url": None,
+            "wb_article": None,
+            "ozon_url": None,
+            "ozon_article": None,
+        })
+
+        if item.get("category") and category_display(entry.get("category")) == "Без категории":
+            entry["category"] = item.get("category")
+
+        marketplace = item.get("marketplace") or _infer_marketplace_from_url(item.get("url"))
+        if marketplace == "WB":
+            entry["wb_url"] = item.get("url") or entry.get("wb_url")
+            entry["wb_article"] = item.get("article") or entry.get("wb_article")
+        elif marketplace == "Ozon":
+            entry["ozon_url"] = item.get("url") or entry.get("ozon_url")
+            entry["ozon_article"] = item.get("article") or entry.get("ozon_article")
+
