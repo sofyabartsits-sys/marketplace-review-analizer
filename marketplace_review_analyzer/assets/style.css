@@ -1,0 +1,84 @@
+:root {
+  --background: #F7F1E8;
+  --card: #FFF8EF;
+  --primary: #7A4E2D;
+  --text: #3B2415;
+  --muted: #756355;
+  --caramel: #C89B6D;
+  --border: #E6D3BD;
+  --warning: #F3D6A5;
+}
+
+.stApp {
+  background: radial-gradient(circle at top left, #FFF8EF 0, #F7F1E8 38%, #F3E6D4 100%);
+  color: var(--text);
+}
+
+.block-container {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  max-width: 1220px;
+}
+
+h1, h2, h3, h4, p, label, span, div {
+  color: var(--text);
+}
+
+.main-card, .result-card, .status-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0 8px 24px rgba(59, 36, 21, 0.08);
+  margin-bottom: 16px;
+}
+
+.status-card {
+  border-left: 5px solid var(--primary);
+}
+
+.problem-badge {
+  display: inline-block;
+  background-color: var(--warning);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 12px;
+  margin: 4px 6px 4px 0;
+  font-weight: 600;
+}
+
+.small-muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.stButton > button, .stDownloadButton > button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.65rem 1.1rem;
+  box-shadow: 0 4px 12px rgba(122, 78, 45, 0.22);
+}
+
+.stButton > button:hover, .stDownloadButton > button:hover {
+  background-color: #633E23;
+  color: white;
+  border: none;
+}
+
+[data-testid="stMetricValue"] {
+  color: var(--primary);
+}
+
+.stTextArea textarea, .stDateInput input, .stFileUploader section {
+  background-color: #FFFDF9;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 18px 0;
+}
